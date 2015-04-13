@@ -52,9 +52,11 @@ class Tube
     def send_response(env)
       status, headers, body = @app.call(env)
 
-      @socket.write status
-      @socket.write headers
-      @socket.write body
+      @socket.write "HTTP/1.1 #{status} OK\r\n"
+      @socket.write "Content-Type: #{headers["Content-Type"]}\r\n"
+      @socket.write "Content-Length: #{headers["Content-Length"]}\r\n"
+      @socket.write "\r\n" 
+      @socket.write body.to_s
       
       socket_close
     end
